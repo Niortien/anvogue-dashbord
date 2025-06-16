@@ -33,11 +33,12 @@ export const createCollection = async (body: CreateCollectionSchema) => {
     return { success: false, error: "Erreur de validation" };
   }
 
-   //Transformation des données en FormData
+  //Transformation des données en FormData
   const formData = new FormData();
   formData.append("nom", data.nom);
   if (data.description) formData.append("description", data.description);
-  
+  if (data.saison) formData.append("saison", data.saison);
+
 
   // Ici, comme il n’y a pas de fichier, on peut envoyer en JSON
   const response = await fetch(CollectionAPI.create.endpoint, {

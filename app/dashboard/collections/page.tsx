@@ -5,11 +5,19 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { FolderOpen } from "lucide-react";
 import PlaceholderCollection from "./placeholder-collection";
+import AddCollection from "./add-collection";
 
 export default async function CollectionsPage() {
 
   return (
-    <div>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Collections</h1>
+          <p className="text-gray-600 mt-1">Organisez vos articles par collections</p>
+        </div>
+        <AddCollection />
+      </div>
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -32,5 +40,6 @@ export default async function CollectionsPage() {
         </CardContent>
       </Card>
     </div>
+
   );
 }
