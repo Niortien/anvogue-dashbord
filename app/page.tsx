@@ -25,7 +25,7 @@ export default function Home() {
             </div>
             <div className="flex items-center">
               <Link href="/dashboard">
-                <Button className="bg-blue-600 hover:bg-blue-700">
+                <Button variant={"outline"}>
                   Accéder au Dashboard
                 </Button>
               </Link>
@@ -39,7 +39,7 @@ export default function Home() {
         <div className="text-center">
           <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl">
             Dashboard de Gestion
-            <span className="text-blue-600 block">d'Articles</span>
+            <span className="text-blue-600 block">d&apos;Articles</span>
           </h1>
           <p className="mt-6 text-xl text-gray-600 max-w-3xl mx-auto">
             Une solution complète pour gérer vos articles, variétés, collections et clients 
@@ -47,7 +47,7 @@ export default function Home() {
           </p>
           <div className="mt-8 flex justify-center space-x-4">
             <Link href="/dashboard">
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+              <Button size="lg">
                 <LayoutDashboard className="mr-2 h-5 w-5" />
                 Commencer
               </Button>
