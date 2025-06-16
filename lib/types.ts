@@ -39,13 +39,13 @@ export interface VariantAttribute {
 
 export interface Category {
   id: string;
-  name: string;
+  nom: string;
   description: string;
- type : string; // 'clothing', 'accessories', etc.
+  type : string; // 'clothing', 'accessories', etc.
 }
 
 export interface Collection {
-
+  id:string;
   nom: string;
   description: string;
   saison:string
@@ -53,18 +53,57 @@ export interface Collection {
 
 }
 
-export interface Client{
-    id: String,
-    nom: String,
-    prenom: String,
-    nomUtilisateur: String,
-    email: String,
-    phone: String,
-    password: String,
-    genre:  String,
-    adresse:  String,
-    date_naissance: String,
-    avatar: String
+export interface Article {
+  id: string;
+  reference: string;
+  nom: string;
+  description?: string;
+  infos: Record<string, any>; // ou un type spécifique si connu
+  status: string;
+  image?: string;
+  quantite?: number;
+  prix: number;
+  genre: string;
+  estEnPromotion?: boolean;
+  prixPromotion?: number;
+  
+  // Relations
+  // categorie: Categorie;
+  categorie_id: string;
+
+  collection?: Collection;
+  collection_id?: string;
+
+  // varietes: Variete[];
+  // notes: Note[];
+  // favoris: Favoris[];
+
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+
+// Définition du type pour les tailles
+export type TailleVariete = {
+  taille: string;
+  quantite: number;
+  prix: number;
+};
+
+// Interface TypeScript pour Variete
+export interface Variete {
+  id: string;
+  reference: string;
+  couleur: string;
+  tailles?: TailleVariete[]; // correspond au champ JSON
+  images: string[];
+
+  // Relation avec Article
+  article: {
+    id: string;
+    nom: string; // tu peux ajouter d'autres champs nécessaires, ou importer l'interface Article complète si besoin
+  };
+  article_id: string;
 }
 
 export interface DashboardStats {

@@ -45,7 +45,7 @@ const CollectionContent = ({ collection }: { collection: Collection[] }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCollection, setEditingCollection] = useState<Collection | null>(null);
-
+console.log(collections);
   const {
     register,
     handleSubmit,

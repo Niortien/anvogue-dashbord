@@ -79,6 +79,7 @@ const CategorieContent = ({ categorie }: CategorieContentProps) => {
   } = useForm<CreateCategorieSchema | UpdateCategorieSchema>({
     resolver: zodResolver(editingCategory ? updateCategorieSchema : createCategorieSchema),
     defaultValues: {
+      
       nom: '',
       description: '',
       type: 'VETEMENT',
@@ -126,15 +127,16 @@ const CategorieContent = ({ categorie }: CategorieContentProps) => {
     }
   };
 
-  const handleEdit = (category: Category) => {
-    setEditingCategory(category);
-    reset({
-      nom: category.nom || '',
-      description: category.description || '',
-      type: category.type || 'VETEMENT',
-    });
-    setIsDialogOpen(true);
-  };
+ const handleEdit = (category: Category) => {
+  setEditingCategory(category);
+  reset({
+    nom: category.nom || '',
+    description: category.description || '',
+    type: category.type as "VETEMENT" | "CHAUSSURE" | "ALIMENT" | "MONTRE",
+  });
+  setIsDialogOpen(true);
+};
+
 
   const handleAdd = () => {
     setEditingCategory(null);
@@ -240,7 +242,7 @@ const CategorieContent = ({ categorie }: CategorieContentProps) => {
                   <SelectValue placeholder="Filtrer par statut" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tous les statuts</SelectItem>
+                  
                   <SelectItem value="active">Actif</SelectItem>
                   <SelectItem value="inactive">Inactif</SelectItem>
                 </SelectContent>
@@ -263,7 +265,7 @@ const CategorieContent = ({ categorie }: CategorieContentProps) => {
                       {editingCategory ? 'Modifier la catégorie' : 'Nouvelle catégorie'}
                     </DialogTitle>
                   </DialogHeader>
-                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 bg-white p-4">
                     <div className="space-y-2">
                       <Label htmlFor="nom">Nom de la catégorie</Label>
                       <Input
@@ -291,11 +293,11 @@ const CategorieContent = ({ categorie }: CategorieContentProps) => {
 
                     <div className="space-y-2">
                       <Label htmlFor="type">Type</Label>
-                      <Select onValueChange={(value) => setValue('type', value as any)} defaultValue="VETEMENT">
+                      <Select  onValueChange={(value) => setValue('type', value as any)} defaultValue="VETEMENT" >
                         <SelectTrigger>
                           <SelectValue placeholder="Sélectionner le type" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className='bg-red-50'>
                           <SelectItem value="VETEMENT">Vêtement</SelectItem>
                           <SelectItem value="CHAUSSURE">Chaussure</SelectItem>
                           <SelectItem value="ALIMENT">Aliment</SelectItem>
@@ -381,10 +383,10 @@ const CategorieContent = ({ categorie }: CategorieContentProps) => {
                               <Trash2 className="h-4 w-4 text-destructive" />
                             </Button>
                           </AlertDialogTrigger>
-                          <AlertDialogContent>
+                          <AlertDialogContent className="bg-white text-black">
                             <AlertDialogHeader>
                               <AlertDialogTitle>Supprimer la catégorie</AlertDialogTitle>
-                              <AlertDialogDescription>
+                              <AlertDialogDescription className=" text-black">
                                 Êtes-vous sûr de vouloir supprimer cette catégorie ? Cette action est irréversible.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
@@ -392,7 +394,7 @@ const CategorieContent = ({ categorie }: CategorieContentProps) => {
                               <AlertDialogCancel>Annuler</AlertDialogCancel>
                               <AlertDialogAction
                                 onClick={() => handleDelete(category.id || '')}
-                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                className="bg-red text-destructive-foreground hover:bg-red/90"
                               >
                                 Supprimer
                               </AlertDialogAction>
