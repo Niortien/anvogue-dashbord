@@ -39,20 +39,20 @@ const formatZodErrors = (errors: any[]) => {
 // Helper function to handle API responses
 const handleApiResponse = async (response: Response) => {
   const responseData = await response.json().catch(() => ({}));
-  
+
   if (!response.ok) {
-    const errorMessage = typeof responseData.message === "string" 
-      ? responseData.message 
-      : Array.isArray(responseData.message) 
-        ? responseData.message[0] 
+    const errorMessage = typeof responseData.message === "string"
+      ? responseData.message
+      : Array.isArray(responseData.message)
+        ? responseData.message[0]
         : `Erreur ${response.status}: ${response.statusText}`;
-    
+
     return {
       success: false,
       error: errorMessage,
     };
   }
-  
+
   return {
     success: true,
     data: responseData,
@@ -96,13 +96,9 @@ export const getAllCategorie = async () => {
   try {
     const response = await fetch(CategorieAPI.getAll.endpoint(), {
       method: CategorieAPI.getAll.method,
-      headers: {
-        "Content-Type": "application/json",
-      },
     });
 
     if (!response.ok) {
-      console.error('Failed to fetch categories:', await response.text());
       return [];
     }
 

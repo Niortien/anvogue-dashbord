@@ -64,15 +64,18 @@ export const createCollection = async (body: CreateCollectionSchema) => {
 
 // GET ALL COLLECTIONS
 export const getAllCollections = async () => {
+  try {
+    const response = await fetch(CollectionAPI.getAll.endpoint(), {
+      method: CollectionAPI.getAll.method,
+    });
 
-  const response = await fetch(CollectionAPI.getAll.endpoint(), {
-    method: CollectionAPI.getAll.method,
-  });
+    if (!response.ok) return [];
+    const responseData = await response.json();
 
-  if (!response.ok) return [];
-
-  const responseData = await response.json();
-  return responseData;
+    return responseData;
+  } catch {
+    return [];
+  }
 };
 
 // GET ONE COLLECTION

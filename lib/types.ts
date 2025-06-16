@@ -27,6 +27,7 @@ export interface Category {
   nom: string;
   description: string;
   type: string; // 'clothing', 'accessories', etc.
+  articles?: Article[];
 }
 
 export interface Collection {
