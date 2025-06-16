@@ -1,7 +1,7 @@
 "use server";
 
 import { createArticleSchema, updateArticleSchema, CreateArticleSchema, UpdateArticleSchema } from "./article.shema";
-import { BASE_URL } from "../../base-url";
+import { BASE_URL } from "../base-url";
 
 const ArticleAPI = {
   create: {
@@ -37,13 +37,14 @@ export const createArticle = async (body: CreateArticleSchema) => {
   const formData = new FormData();
 
   formData.append("nom", data.nom);
-  if (data.description) formData.append("description", data.description);
   formData.append("categorie_id", data.categorie_id);
-  if (data.collection_id) formData.append("collection_id", data.collection_id);
   formData.append("infos", JSON.stringify(data.infos));
+  formData.append("prix", data.prix.toString());
+
+  if (data.description) formData.append("description", data.description);
+  if (data.collection_id) formData.append("collection_id", data.collection_id);
   if (data.image) formData.append("image", data.image);
   if (data.quantite) formData.append("quantite", data.quantite.toString());
-  formData.append("prix", data.prix.toString());
   if (data.estEnPromotion !== undefined) formData.append("estEnPromotion", data.estEnPromotion.toString());
   if (data.prixPromotion !== undefined) formData.append("prixPromotion", data.prixPromotion.toString());
   if (data.genre) formData.append("genre", data.genre);

@@ -63,6 +63,7 @@ export const createCollection = async (body: CreateCollectionSchema) => {
 
 // GET ALL COLLECTIONS
 export const getAllCollections = async () => {
+
   const response = await fetch(CollectionAPI.getAll.endpoint(), {
     method: CollectionAPI.getAll.method,
   });

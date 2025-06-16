@@ -2,7 +2,6 @@
 import React from 'react';
 
 import { useState } from 'react';
-import { DashboardLayout } from '@/components/dashboard/dashboard-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -17,8 +16,8 @@ import {
 import { Search, Users, Mail, Phone, MapPin, ShoppingBag, Euro } from 'lucide-react';
 ;
 import { Client } from '@/lib/types';
-const ClientContent = ({client}:{client:Client[]} ) => {
-    const [searchTerm, setSearchTerm] = useState('');
+const ClientContent = ({ client }: { client: Client[] }) => {
+  const [searchTerm, setSearchTerm] = useState('');
 
   const filteredClients = client.filter(client =>
     client.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -29,14 +28,13 @@ const ClientContent = ({client}:{client:Client[]} ) => {
   const totalClients = client.length;
   // const activeClients = client.filter(client => client.isActive).length;
 
- 
+
 
   // const totalRevenue = client.reduce((sum, client) => sum + client.totalSpent, 0);
   // const totalOrders = client.reduce((sum, client) => sum + client.totalOrders, 0);
   // TODO:variable activeClient , totalRevenue,et totalOrders
-    return (
-        <div>
-             <DashboardLayout>
+  return (
+    <div>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -68,7 +66,7 @@ const ClientContent = ({client}:{client:Client[]} ) => {
                   <p className="text-sm font-medium text-gray-600">Clients Actifs</p>
                   <p className="text-2xl font-bold text-gray-900">
                     {/* {activeClients} */}
-                    </p>
+                  </p>
                 </div>
                 <div className="p-2 bg-green-50 rounded-lg">
                   <Users className="w-6 h-6 text-green-600" />
@@ -82,7 +80,7 @@ const ClientContent = ({client}:{client:Client[]} ) => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Commandes Totales</p>
-                  <p className="text-2xl font-bold text-gray-900"> 
+                  <p className="text-2xl font-bold text-gray-900">
                     {/* {totalOrders}  */}
 
                   </p>
@@ -101,7 +99,7 @@ const ClientContent = ({client}:{client:Client[]} ) => {
                   <p className="text-sm font-medium text-gray-600">CA Total</p>
                   <p className="text-2xl font-bold text-gray-900">
                     {/* {totalRevenue.toLocaleString('fr-FR')}€ */}
-                    </p>
+                  </p>
                 </div>
                 <div className="p-2 bg-red-50 rounded-lg">
                   <Euro className="w-6 h-6 text-red-600" />
@@ -190,9 +188,8 @@ const ClientContent = ({client}:{client:Client[]} ) => {
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
-        </div>
-    );
+    </div>
+  );
 }
 
 export default ClientContent;

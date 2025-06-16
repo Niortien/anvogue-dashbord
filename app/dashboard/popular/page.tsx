@@ -1,6 +1,6 @@
 'use client';
 
-import { DashboardLayout } from '@/components/dashboard/dashboard-layout';
+import { DashboardLayout } from '@/app/dashboard/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Heart, Star, TrendingUp } from 'lucide-react';
@@ -64,7 +64,6 @@ export default function PopularPage() {
   const mostLikedArticle = popularArticles[0];
 
   return (
-    <DashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -250,6 +249,5 @@ export default function PopularPage() {
           </Card>
         </div>
       </div>
-    </DashboardLayout>
   );
 }

@@ -3,10 +3,10 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  LayoutDashboard, 
-  Package, 
-  Users, 
+import {
+  LayoutDashboard,
+  Package,
+  Users,
   TrendingUp,
   Heart,
   BarChart3
@@ -25,7 +25,7 @@ export default function Home() {
             </div>
             <div className="flex items-center">
               <Link href="/dashboard">
-                <Button variant={"outline"}>
+                <Button>
                   Accéder au Dashboard
                 </Button>
               </Link>
@@ -42,7 +42,7 @@ export default function Home() {
             <span className="text-blue-600 block">d&apos;Articles</span>
           </h1>
           <p className="mt-6 text-xl text-gray-600 max-w-3xl mx-auto">
-            Une solution complète pour gérer vos articles, variétés, collections et clients 
+            Une solution complète pour gérer vos articles, variétés, collections et clients
             avec des analyses avancées et des graphiques interactifs.
           </p>
           <div className="mt-8 flex justify-center space-x-4">
@@ -69,12 +69,12 @@ export default function Home() {
                 <div className="p-2 bg-blue-50 rounded-lg">
                   <Package className="h-6 w-6 text-blue-600" />
                 </div>
-                <CardTitle>Gestion d'Articles</CardTitle>
+                <CardTitle>Gestion d&apos;Articles</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
               <p className="text-gray-600">
-                Ajoutez, modifiez et supprimez vos articles facilement. 
+                Ajoutez, modifiez et supprimez vos articles facilement.
                 Organisez-les par catégories, variétés et collections.
               </p>
             </CardContent>
@@ -91,7 +91,7 @@ export default function Home() {
             </CardHeader>
             <CardContent>
               <p className="text-gray-600">
-                Suivez vos clients, leurs commandes et leur historique d'achat. 
+                Suivez vos clients, leurs commandes et leur historique d&apos;achat.
                 Analysez les tendances de consommation.
               </p>
             </CardContent>
@@ -108,7 +108,7 @@ export default function Home() {
             </CardHeader>
             <CardContent>
               <p className="text-gray-600">
-                Identifiez les articles les plus aimés par vos clients 
+                Identifiez les articles les plus aimés par vos clients
                 et optimisez votre catalogue en conséquence.
               </p>
             </CardContent>
@@ -125,7 +125,7 @@ export default function Home() {
             </CardHeader>
             <CardContent>
               <p className="text-gray-600">
-                Visualisez vos performances avec des graphiques interactifs. 
+                Visualisez vos performances avec des graphiques interactifs.
                 Prenez des décisions éclairées basées sur les données.
               </p>
             </CardContent>
@@ -142,7 +142,7 @@ export default function Home() {
             </CardHeader>
             <CardContent>
               <p className="text-gray-600">
-                Consultez vos KPI en temps réel : ventes, revenus, 
+                Consultez vos KPI en temps réel : ventes, revenus,
                 croissance mensuelle et bien plus encore.
               </p>
             </CardContent>
@@ -159,7 +159,7 @@ export default function Home() {
             </CardHeader>
             <CardContent>
               <p className="text-gray-600">
-                Interface moderne et responsive, facile à utiliser 
+                Interface moderne et responsive, facile à utiliser
                 sur tous les appareils. Navigation simple et efficace.
               </p>
             </CardContent>
@@ -172,7 +172,7 @@ export default function Home() {
             Prêt à Optimiser Votre Gestion ?
           </h2>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Découvrez toutes les fonctionnalités de notre dashboard 
+            Découvrez toutes les fonctionnalités de notre dashboard
             et transformez la façon dont vous gérez vos articles.
           </p>
           <Link href="/dashboard">
@@ -192,7 +192,7 @@ export default function Home() {
             <span className="ml-2 text-xl font-bold">Dashboard Admin</span>
           </div>
           <p className="text-gray-400">
-            Solution complète de gestion d'articles avec analyses avancées
+            Solution complète de gestion d&apos;articles avec analyses avancées
           </p>
         </div>
       </footer>

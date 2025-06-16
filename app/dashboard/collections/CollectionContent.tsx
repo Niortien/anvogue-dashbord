@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { DashboardLayout } from '@/components/dashboard/dashboard-layout';
+import { DashboardLayout } from '@/app/dashboard/layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -45,7 +45,6 @@ const CollectionContent = ({ collection }: { collection: Collection[] }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCollection, setEditingCollection] = useState<Collection | null>(null);
-console.log(collections);
   const {
     register,
     handleSubmit,
@@ -136,7 +135,6 @@ console.log(collections);
   };
 
   return (
-    <DashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -240,7 +238,6 @@ console.log(collections);
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
   );
 };
 

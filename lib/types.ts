@@ -1,18 +1,3 @@
-export interface Article {
-  id: string;
-  title: string;
-  description: string;
-  basePrice: number;
-  categoryId: string;
-  collectionId: string;
-  image: string;
-  likes: number;
-  createdAt: Date;
-  updatedAt: Date;
-  isActive: boolean;
-  variants: ArticleVariant[];
-}
-
 export interface ArticleVariant {
   id: string;
   articleId: string;
@@ -41,15 +26,15 @@ export interface Category {
   id: string;
   nom: string;
   description: string;
-  type : string; // 'clothing', 'accessories', etc.
+  type: string; // 'clothing', 'accessories', etc.
 }
 
 export interface Collection {
-  id:string;
+  id: string;
   nom: string;
   description: string;
-  saison:string
- 
+  saison: string
+
 
 }
 
@@ -66,7 +51,7 @@ export interface Article {
   genre: string;
   estEnPromotion?: boolean;
   prixPromotion?: number;
-  
+
   // Relations
   // categorie: Categorie;
   categorie_id: string;
@@ -81,7 +66,6 @@ export interface Article {
   createdAt: Date;
   updatedAt: Date;
 }
-
 
 // Définition du type pour les tailles
 export type TailleVariete = {

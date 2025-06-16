@@ -1,12 +1,10 @@
-'use client';
-
-import { Sidebar } from './sidebar';
+import { Sidebar } from '../../components/dashboard/sidebar';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
-export function DashboardLayout({ children }: DashboardLayoutProps) {
+export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <div className="flex h-screen bg-gray-50">
       <Sidebar />
