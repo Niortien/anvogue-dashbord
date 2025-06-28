@@ -20,15 +20,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Plus } from 'lucide-react';
-import { CreateCollectionSchema } from '@/service-anvogue/collection/collection.schema';
-import { createCollection } from '@/service-anvogue/collection/collection.action';
+import { Edit, Plus } from 'lucide-react';
+import { CreateCollectionSchema, updateCollectionSchema } from '@/service-anvogue/collection/collection.schema';
+import { createCollection, updateCollection } from '@/service-anvogue/collection/collection.action';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
-const saisons = ['PRINTEMPS', 'ETE', 'AUTOMNE', 'HIVER', 'TOUTES_SAISONS'];
+import { Collection } from '@/lib/types';
 
-export default function AddCollection() {
+const saisons = ['PRINTEMPS', 'ÉTÉ', 'AUTOMNE', 'HIVER', 'TOUTES_SAISONS'];
+interface EditCollectionProps {
+    collection: Collection;
+  }
+export default function EditCollection({ collection }: EditCollectionProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const router = useRouter()
   const {
@@ -39,28 +43,29 @@ export default function AddCollection() {
     formState: { errors, isSubmitting },
   } = useForm<CreateCollectionSchema>();
 
-  const handleAdd = () => {
-    reset();
-    setIsDialogOpen(true);
-  };
-
-  const onSubmit = async (data: CreateCollectionSchema) => {
-    try {
-      const result = await createCollection(data);
-      if (result.success && result.data) {
-        toast.success("Collection créée avec succès");
-      } else {
-        toast.error(result.error || "Erreur lors de la création");
-        return;
-      }
-      setIsDialogOpen(false);
-      reset();
-    } catch {
-      toast.error("Une erreur inattendue s'est produite");
-    } finally {
-      router.refresh()
-    }
-  };
+  
+  const handleEdit = () => {
+     reset();
+     setIsDialogOpen(true);
+   };
+ 
+   const onSubmit = async (data: CreateCollectionSchema) => {
+     try {
+       const result = await updateCollection(collection.id, data);
+       if (result.success && result.data) {
+         toast.success("Collection modifiée avec succès");
+       } else {
+         toast.error(result.error || "Erreur lors de la modification");
+         return;
+       }
+       setIsDialogOpen(false);
+       reset();
+     } catch {
+       toast.error("Une erreur inattendue s'est produite");
+     } finally {
+       router.refresh()
+     }
+   };
 
   const handleDialogClose = (open: boolean) => {
     setIsDialogOpen(open);
@@ -72,8 +77,10 @@ export default function AddCollection() {
   return (
     <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
       <DialogTrigger asChild>
-        <Button onClick={handleAdd}>
-          <Plus size={20} className="mr-2" /> Nouvelle Collection
+        <Button 
+        onClick={() => handleEdit()}>
+          <Edit className="h-4 w-4" />
+          
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -85,7 +92,7 @@ export default function AddCollection() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 px-4 bg-white">
           <div>
             <Label htmlFor="nom">Nom</Label>
-            <Input id="nom" {...register('nom', { required: 'Le nom est obligatoire' })} />
+            <Input id="nom" {...register('nom')} />
           </div>
 
           <div>
@@ -112,7 +119,7 @@ export default function AddCollection() {
               Annuler
             </Button>
             <Button type="submit">
-              {isSubmitting ? 'En cours...' : 'Créer'}
+              {isSubmitting ? 'En cours...' : 'Modifier'}
             </Button>
           </div>
         </form>

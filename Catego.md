@@ -7,15 +7,13 @@ import PlaceholderCollection from "./placeholder-collection";
 import AddCategorie from "./add-categorie";
 import SearchCategorie from "./search-categorie";
 import { loadSearchParams } from "./searchParams";
-import type { SearchParams } from 'nuqs/server'
 
 interface PageProps {
-  searchParams: Promise<SearchParams>
+  searchParams: Record<string, string | string[] | undefined>
 }
 
-export default async function CategoriesPage({ searchParams }: PageProps) {
-
-  const { categorie } = await loadSearchParams(searchParams)
+export default  function CategoriesPage({ searchParams }: PageProps) {
+  const { categorie } = loadSearchParams(searchParams)
   console.log(categorie)
 
   return (
@@ -32,7 +30,6 @@ export default async function CategoriesPage({ searchParams }: PageProps) {
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
               <FolderOpen size={20} /> Liste des Categories
-              {/* ({filteredCollections.length}) */}
             </CardTitle>
             <SearchCategorie />
           </div>
@@ -44,6 +41,5 @@ export default async function CategoriesPage({ searchParams }: PageProps) {
         </CardContent>
       </Card>
     </div>
-
   );
 }

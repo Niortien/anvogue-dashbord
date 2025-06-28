@@ -38,13 +38,19 @@ export interface Collection {
 
 
 }
+export interface Taille {
+  taille?: string;
+  quantite?: number;
+  prix?: number;
+}
+
 
 export interface Article {
   id: string;
   reference: string;
   nom: string;
   description?: string;
-  infos: Record<string, any>; // ou un type spécifique si connu
+  infos: Taille[]; // ✅ maintenant typé, plus clair
   status: string;
   image?: string;
   quantite?: number;
@@ -54,19 +60,18 @@ export interface Article {
   prixPromotion?: number;
 
   // Relations
-  // categorie: Categorie;
   categorie_id: string;
-
   collection?: Collection;
   collection_id?: string;
 
-  // varietes: Variete[];
-  // notes: Note[];
-  // favoris: Favoris[];
+  varietes: Variete[];
+  notes: Note[];
+  favoris: Favoris[];
 
   createdAt: Date;
   updatedAt: Date;
 }
+
 
 // Définition du type pour les tailles
 export type TailleVariete = {

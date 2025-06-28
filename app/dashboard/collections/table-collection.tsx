@@ -10,6 +10,8 @@ import {
 import { Collection } from '@/lib/types';
 import { getAllCollections } from '@/service-anvogue/collection/collection.action';
 import ActionsCollection from './actions-collection';
+import EditCollection from './edit-collection';
+import DeleteCollection from './delete-collection';
 
 const getSeasonColor = (saison?: string) => {
   switch (saison) {
@@ -48,7 +50,10 @@ export default async function TableCollection({ }: Props) {
               <Badge className={getSeasonColor(collection.saison)}>{collection.saison?.replaceAll("_", " ").toUpperCase()}</Badge>
             </TableCell>
             <TableCell>
-              <ActionsCollection collection={collection} />
+              
+              <EditCollection collection={collection} />
+              <DeleteCollection collection={collection} />
+              
             </TableCell>
           </TableRow>
         ))}
