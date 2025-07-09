@@ -48,7 +48,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Image from 'next/image';
-import { createVariete } from '@/service-anvogue/variete/variete.action';
+import { createVariete, updateVariete } from '@/service-anvogue/variete/variete.action';
 
 export default function ArticleContent({
   article,
@@ -68,6 +68,7 @@ export default function ArticleContent({
   const [searchTerm, setSearchTerm] = useState("");
   const [categories, setCategories] = useState<Category[]>(categorie);
   const [collections, setCollections] = useState<Collection[]>(collection);
+  
   const [files, setFiles] = useState<File[]>([]);
   const newArticleBtnRef = useRef<HTMLButtonElement>(null);
 
@@ -120,15 +121,15 @@ export default function ArticleContent({
     resolver: zodResolver(editingVariant ? updateVarieteSchema : createVarieteSchema),
     defaultValues: {
       couleur: '',
-      images: [],
+      image: '',
       tailles: [],
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
-    control: controlVariant,
-    name: 'tailles',
-  });
+  // const { fields, append, remove } = useFieldArray({
+  //   control: controlVariant,
+  //   name: 'tailles',
+  // });
 
   // ENVOI ARTICLE
 const handleSubmitArticle: SubmitHandler<CreateArticleSchema> = async (data) => {
@@ -138,7 +139,7 @@ const handleSubmitArticle: SubmitHandler<CreateArticleSchema> = async (data) => 
       image: files.length > 0 && files[0] instanceof File ? files[0] : undefined,
     };
 
-    console.log("Payload à envoyer :", payload); // debug temporaire
+    console.log("Payload de l'article à envoyer :", payload); // debug temporaire pour voir les données envoyé par mon front
 
     let result: { success: boolean; data?: Article; error?: string };
     if (editingArticle) {
@@ -179,6 +180,52 @@ const handleSubmitArticle: SubmitHandler<CreateArticleSchema> = async (data) => 
     toast.error("Erreur inattendue");
   }
 };
+// ADMISSION DU FORMULAIRE D'UNE VARIANTE
+const onSubmitVariants: SubmitHandler<CreateVarieteSchema> = async (data) => {
+  try {
+    const payload: CreateVarieteSchema = {
+      ...data,
+      image: files.length > 0 && files[0] instanceof File ? files[0] : undefined,
+    };
+
+    console.log("Payload de la variete à envoyer :", payload); // debug temporaire pour voir les données envoyé par mon front
+
+    let result: { success: boolean; data?: Article; error?: string };
+    if (editingVariant) {
+      const editingId = editingVariant.id;
+      result = await updateVariete(editingId, payload as UpdateVarieteSchema);
+      if (result.success && result.data) {
+       setEditingVariant(result.data);
+        //TODO:je dois fetch les varietés apres pour les mettre dan un state nommé variant
+        toast.success("Varieté modifié avec succès");
+      } else {
+        toast.error(result.error || "Erreur lors de la modification");
+        return;
+      }
+    } else {
+      result = await createVariete(payload);
+      if (result.success && result.data) {
+        setEditingVariant(prev => [...prev, result.data]);
+        toast.success("Article créé avec succès");
+      } else {
+        toast.error(result.error || "Erreur lors de la création de l'article");
+        return;
+      }
+    }
+
+    reset(undefined, {
+      keepValues: false,
+      keepDirty: false,
+      shouldFocusError: false,
+    });
+    setFiles([]);
+    setEditingVariant(null);
+    setIsDialogOpen(false);
+  } catch (err) {
+    console.error("Erreur inattendue :", err);
+    toast.error("Erreur inattendue");
+  }
+};
 
 
   const { fields: infosFields, append: appendInfo, remove: removeInfo } = useFieldArray({
@@ -186,24 +233,30 @@ const handleSubmitArticle: SubmitHandler<CreateArticleSchema> = async (data) => 
     name: 'infos',
   });
 
-  // ENVOI VARIANTE
-  const onSubmitVariant: SubmitHandler<CreateVarieteSchema> = async (data: CreateVarieteSchema) => {
-    if (!selectedArticleForVariant) return;
-    const payload: CreateVarieteSchema = {
-      ...data,
-      article_id: selectedArticleForVariant.id,
-    };
-    const result = await createVariete(payload);
-    if (result.success) {
-      toast.success("Variante créée avec succès");
-      setIsVariantDialogOpen(false);
-      resetVariant();
-      setEditingVariant(null);
-      setSelectedArticleForVariant(null);
-    } else {
-      toast.error(result.error || "Erreur lors de la création de la variante");
-    }
-  };
+  //TODO:formulaire UseForm de taille nil faut que je place cette partie dans le formulaire de la varieté
+   const { fields: taillesFields, append: appendTailles, remove: removeTailles } = useFieldArray({
+    control,
+    name: 'tailles',
+  });
+
+  // // ENVOI VARIANTE ANCIEN
+  // const onSubmitVariant: SubmitHandler<CreateVarieteSchema> = async (data: CreateVarieteSchema) => {
+  //   if (!selectedArticleForVariant) return;
+  //   const payload: CreateVarieteSchema = {
+  //     ...data,
+  //     article_id: selectedArticleForVariant.id,
+  //   };
+  //   const result = await createVariete(payload);
+  //   if (result.success) {
+  //     toast.success("Variante créée avec succès");
+  //     setIsVariantDialogOpen(false);
+  //     resetVariant();
+  //     setEditingVariant(null);
+  //     setSelectedArticleForVariant(null);
+  //   } else {
+  //     toast.error(result.error || "Erreur lors de la création de la variante");
+  //   }
+  // };
 
   // AJOUT ARTICLE
   const handleAddArticle = () => {
@@ -247,7 +300,7 @@ const handleSubmitArticle: SubmitHandler<CreateArticleSchema> = async (data) => 
     setEditingVariant(null);
     resetVariant({
       couleur: '',
-      images: [],
+      image: '',
       tailles: [],
     });
     setIsVariantDialogOpen(true);
@@ -259,7 +312,7 @@ const handleSubmitArticle: SubmitHandler<CreateArticleSchema> = async (data) => 
     setEditingVariant(variant);
     resetVariant({
       couleur: variant.couleur,
-      images: variant.images || [],
+      image: variant.image ,
       tailles: variant.tailles || [],
     });
     setIsVariantDialogOpen(true);
@@ -519,10 +572,10 @@ const handleSubmitArticle: SubmitHandler<CreateArticleSchema> = async (data) => 
   <div>
     <Label>Tailles, prix et quantités</Label>
     <div className="space-y-4 mt-2">
-      {infosFields.map((field, index) => (
+      {taillesFields.map((field, index) => (
         <div key={field.id} className="grid grid-cols-3 gap-2 items-end">
           <div>
-            <Label htmlFor={`infos.${index}.taille`}>Taille</Label>
+            <Label htmlFor={`tailles.${index}.taille`}>Taille</Label>
             <Input {...register(`infos.${index}.taille`)} placeholder="M" />
           </div>
           <div>
@@ -556,7 +609,7 @@ const handleSubmitArticle: SubmitHandler<CreateArticleSchema> = async (data) => 
       <Button
         type="button"
         variant="outline"
-        onClick={() => appendInfo({ taille: '', quantite: 0, prix: 0 })}
+        onClick={() => appendTailles({ taille: '', quantite: 0, prix: 0 })}
       >
         + Ajouter une taille
       </Button>
@@ -582,9 +635,11 @@ const handleSubmitArticle: SubmitHandler<CreateArticleSchema> = async (data) => 
     </Button>
   </div>
 </form>
+
+
             </DialogContent>
           </Dialog>
-
+          <Dialog open={isVariantDialogOpen} onOpenChange={setIsVariantDialogOpen}></Dialog>
           <Dialog open={isVariantDialogOpen} onOpenChange={setIsVariantDialogOpen}>
             <DialogContent className="max-w-4xl">
               <DialogHeader>
@@ -597,126 +652,177 @@ const handleSubmitArticle: SubmitHandler<CreateArticleSchema> = async (data) => 
                   )}
                 </DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleSubmitVariant(onSubmitVariant)}  className="space-y-6 bg-white">
+              {/* FORMULAIRE DE  DE LA VARIETE */}
+
+
+<form
+  onSubmit={handleSubmitVariant(onSubmitVariants)}
+  className="space-y-6 bg-[#F8F5F0] p-6 rounded-xl shadow-lg max-h-[90vh] overflow-y-auto"
+>
   {/* Couleur */}
   <div>
-    <Label htmlFor="couleur" className="text-sm font-medium text-gray-700">
-      Couleur <span className="text-red-500">*</span>
-    </Label>
-    <Input 
-      id="couleur" 
-      {...registerVariant('couleur')} 
+    <Label htmlFor="couleur" className="text-gray-800 font-medium">Couleur <span className="text-red-500">*</span></Label>
+    <Input
+      id="couleur"
+      {...registerVariant("couleur")}
       placeholder="Ex: Rouge, Bleu marine, Noir..."
-      className="mt-1"
+      className="mt-1 bg-white border-gray-300"
     />
-    {variantErrors.couleur && <p className="text-red-500 text-sm mt-1">{variantErrors.couleur.message}</p>}
+    {variantErrors.couleur && (
+      <p className="text-red-500 text-sm mt-1">{variantErrors.couleur.message}</p>
+    )}
   </div>
 
-  {/* Images */}
+  {/* Image */}
   <div>
-    <Label htmlFor="images" className="text-sm font-medium text-gray-700">
-      Images <span className="text-red-500">*</span>
-    </Label>
+    <Label htmlFor="image" className="text-gray-800 font-medium">Image <span className="text-red-500">*</span></Label>
     <div className="mt-1 space-y-2">
-      <Input
-        id="images"
+      <input
         type="file"
-        multiple
+        id="image"
         accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
-        {...registerVariant('images')}
-        className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+        onChange={(e) => {
+          if (e.target.files && e.target.files.length > 0) {
+            setFiles([e.target.files[0]]);
+          }
+        }}
+        className="w-full border border-gray-300 rounded-md px-4 py-2 bg-white"
       />
-      <p className="text-xs text-gray-500">
-        Sélectionnez plusieurs images pour cette variante. Formats acceptés: JPEG, PNG, GIF, WebP (max 10 Mo par image)
+      <p className="text-xs text-gray-600">
+        Sélectionnez une image (JPEG, PNG, GIF, WebP - max 10 Mo)
       </p>
     </div>
-    {variantErrors.images && <p className="text-red-500 text-sm mt-1">{variantErrors.images.message}</p>}
+    {variantErrors.image && (
+      <p className="text-red-500 text-sm mt-1">{variantErrors.image.message}</p>
+    )}
   </div>
 
-  {/* Section Tailles et Stock */}
+  {/* Article associé */}
+  <div>
+    <Label htmlFor="article_id" className="text-gray-800 font-medium">Article</Label>
+    <Controller
+      name="article_id"
+      control={controlVariant}
+      defaultValue={selectedArticleForVariant?.id ?? ''}
+      render={({ field }) => (
+        <Select
+          value={field.value}
+          onValueChange={(val) => field.onChange(val === "none" ? "" : val)}
+        >
+          <SelectTrigger className="bg-white border-gray-300">
+            <SelectValue placeholder="Sélectionner un article" />
+          </SelectTrigger>
+          <SelectContent className="bg-white">
+            <SelectItem value="none">Aucun</SelectItem>
+            {articles.map((article) => (
+              <SelectItem key={article.id} value={article.id}>
+                {article.nom}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
+    />
+    {variantErrors.article_id && (
+      <p className="text-red-500 text-sm mt-1">{variantErrors.article_id.message}</p>
+    )}
+  </div>
+
+  {/* Tailles */}
   <div className="space-y-4">
-    <div className="flex items-center justify-between">
+    <div className="flex justify-between items-center">
       <div>
-        <h3 className="text-lg font-medium text-gray-900">Tailles et stock</h3>
-        <p className="text-sm text-gray-500">Ajoutez les différentes tailles disponibles pour cette variante</p>
+        <h3 className="text-lg font-semibold text-gray-800">Tailles et stock</h3>
+        <p className="text-sm text-gray-600">Ajoutez les tailles disponibles</p>
       </div>
       <Button
         type="button"
         variant="outline"
-        onClick={() => append({ taille: '', quantite: 0, prix: 0 })}
-        className="flex items-center space-x-2"
+        onClick={() => appendTailles({ taille: "", quantite: 0, prix: 0 })}
+        className="bg-white border-gray-300 text-gray-700 hover:bg-gray-100"
       >
         <Plus size={16} />
         <span>Ajouter une taille</span>
       </Button>
     </div>
 
-    {fields.length === 0 && (
-      <div className="text-center py-8 text-gray-500 border-2 border-dashed border-gray-300 rounded-lg">
-        <div className="space-y-2">
-          <p>Aucune taille ajoutée</p>
-          <p className="text-sm">Cliquez sur Ajouter une taille pour commencer</p>
-        </div>
+    {taillesFields.length === 0 && (
+      <div className="text-center py-8 text-gray-500 border-2 border-dashed border-gray-300 rounded-lg bg-white">
+        <p>Aucune taille ajoutée</p>
+        <p className="text-sm">Cliquez sur "Ajouter une taille"</p>
       </div>
     )}
 
     <div className="space-y-3">
-      {fields.map((field, index) => (
-        <div key={field.id} className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
+      {taillesFields.map((field, index) => (
+        <div
+          key={field.id}
+          className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 border border-gray-200 rounded-lg bg-white"
+        >
+          {/* Taille */}
           <div>
-            <Label htmlFor={`tailles.${index}.taille`} className="text-sm font-medium text-gray-700">
+            <Label htmlFor={`tailles.${index}.taille`}>
               Taille <span className="text-red-500">*</span>
             </Label>
-            <Input 
-              {...registerVariant(`tailles.${index}.taille`)} 
-              placeholder="Ex: S, M, L, XL, 38, 40..."
-              className="mt-1"
+            <Input
+              {...registerVariant(`tailles.${index}.taille`)}
+              placeholder="Ex: S, M, L"
+              className="mt-1 bg-white"
             />
             {variantErrors.tailles?.[index]?.taille && (
-              <p className="text-red-500 text-sm mt-1">{variantErrors.tailles[index]?.taille?.message}</p>
+              <p className="text-red-500 text-sm mt-1">
+                {variantErrors.tailles[index]?.taille?.message}
+              </p>
             )}
           </div>
 
+          {/* Quantité */}
           <div>
-            <Label htmlFor={`tailles.${index}.quantite`} className="text-sm font-medium text-gray-700">
+            <Label>
               Quantité <span className="text-red-500">*</span>
             </Label>
             <Input
               type="number"
-              min="0"
+              min={0}
               {...registerVariant(`tailles.${index}.quantite`, { valueAsNumber: true })}
+              className="mt-1 bg-white"
               placeholder="0"
-              className="mt-1"
             />
             {variantErrors.tailles?.[index]?.quantite && (
-              <p className="text-red-500 text-sm mt-1">{variantErrors.tailles[index]?.quantite?.message}</p>
+              <p className="text-red-500 text-sm mt-1">
+                {variantErrors.tailles[index]?.quantite?.message}
+              </p>
             )}
           </div>
 
+          {/* Prix */}
           <div>
-            <Label htmlFor={`tailles.${index}.prix`} className="text-sm font-medium text-gray-700">
+            <Label>
               Prix (€) <span className="text-red-500">*</span>
             </Label>
             <Input
               type="number"
               step="0.01"
-              min="0"
+              min={0}
               {...registerVariant(`tailles.${index}.prix`, { valueAsNumber: true })}
+              className="mt-1 bg-white"
               placeholder="0.00"
-              className="mt-1"
             />
             {variantErrors.tailles?.[index]?.prix && (
-              <p className="text-red-500 text-sm mt-1">{variantErrors.tailles[index]?.prix?.message}</p>
+              <p className="text-red-500 text-sm mt-1">
+                {variantErrors.tailles[index]?.prix?.message}
+              </p>
             )}
           </div>
 
+          {/* Supprimer */}
           <div className="flex items-end">
             <Button
               type="button"
-              variant="outline"
+              variant="ghost"
               size="sm"
-              onClick={() => remove(index)}
-              className="text-red-600 hover:text-red-700 hover:bg-red-50 w-full md:w-auto"
+              onClick={() => removeTailles(index)}
+              className="text-red-600 hover:bg-red-100 w-full md:w-auto"
               title="Supprimer cette taille"
             >
               <Trash2 size={16} className="mr-2 md:mr-0" />
@@ -726,65 +832,50 @@ const handleSubmitArticle: SubmitHandler<CreateArticleSchema> = async (data) => 
         </div>
       ))}
     </div>
-
-    {fields.length > 0 && (
-      <div className="text-sm text-gray-500 bg-blue-50 p-3 rounded-lg">
-        <p className="font-medium text-blue-700">💡 Conseil</p>
-        <p>Assurez-vous que chaque taille a un prix et une quantité en stock définis.</p>
-      </div>
-    )}
   </div>
 
-  {/* Informations supplémentaires */}
-  <div className="bg-gray-50 p-4 rounded-lg">
-    <h4 className="text-sm font-medium text-gray-700 mb-2">Informations de la variante</h4>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+  {/* Résumé */}
+  <div className="bg-white p-4 rounded-lg border">
+    <h4 className="text-sm font-medium text-gray-800 mb-2">Résumé</h4>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
       <div>
-        <span className="text-gray-500">Nombre de tailles:</span>
-        <span className="ml-2 font-medium">{fields.length}</span>
-      </div>
-      <div>
-        <span className="text-gray-500">Stock total:</span>
-        {/* <span className="ml-2 font-medium">
-          {fields.reduce((total, field, index) => {
-            const quantite = watchVariant(`tailles.${index}.quantite`) || 0;
-            return total + (typeof quantite === 'number' ? quantite : 0);
-          }, 0)}
-        </span> */}
+        <span className="font-medium">Nombre de tailles :</span>
+        <span className="ml-2">{taillesFields.length}</span>
       </div>
     </div>
   </div>
 
-  {/* Boutons d'action */}
-  <div className="flex justify-end space-x-3 pt-6 border-t">
-    <Button 
-      type="button" 
-      variant="outline" 
+  {/* Boutons */}
+  <div className="flex justify-end space-x-3 pt-6 border-t border-gray-300">
+    <Button
+      type="button"
+      variant="outline"
       onClick={() => setIsVariantDialogOpen(false)}
       disabled={isSubmittingVariant}
+      className="bg-white hover:bg-gray-100"
     >
       Annuler
     </Button>
-    <Button 
-      type="submit" 
-      className="bg-blue-600 hover:bg-blue-700" 
-      disabled={isSubmittingVariant || fields.length === 0}
+    <Button
+      type="submit"
+      className="bg-blue-600 hover:bg-blue-700 text-white"
+      disabled={isSubmittingVariant || taillesFields.length === 0}
     >
       {isSubmittingVariant ? (
         <>
-          <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-white" viewBox="0 0 24 24" fill="none">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
           Enregistrement...
         </>
-      ) : (
-        editingVariant ? 'Modifier la variante' : 'Créer la variante'
-      )}
+      ) : editingVariant ? "Modifier la variante" : "Créer la variante"}
     </Button>
   </div>
 </form>
-            </DialogContent>
+
+
+ </DialogContent>
           </Dialog>
         </div>
       </div>

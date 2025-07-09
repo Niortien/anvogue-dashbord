@@ -35,10 +35,14 @@ export const createVarieteSchema = z.object({
       required_error: "La liste des tailles est requise",
     })),
 
-  images: z
-    .array(z.string().min(1, "Le chemin de l'image ne peut pas être vide"), {
-      required_error: "Les images sont requises",
-    }),
+  image: z
+    .any()
+    .refine(
+      (file) =>
+        !file || file instanceof File || typeof file === "string",
+      { message: "L'image doit être un fichier ou une URL" }
+    )
+    .optional(),
 
   article_id: z.string({
     required_error: "L'identifiant de l'article est requis",
@@ -63,10 +67,20 @@ export const updateVarieteSchema = z.object({
       return val;
     }, z.array(tailleSchema).optional()),
 
-  images: z.array(z.string()).optional(),
+  image:  z
+    .any()
+    .refine(
+      (file) =>
+        !file || file instanceof File || typeof file === "string",
+      { message: "L'image doit être un fichier ou une URL" }
+    )
+    .optional(),
 
   article_id: z.string().optional(),
 });
 
 
 export type UpdateVarieteSchema = z.infer<typeof updateVarieteSchema>;
+export const varieteSchema  = createVarieteSchema.partial();
+
+export type VarieteSchema = z.infer<typeof varieteSchema>;

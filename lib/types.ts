@@ -86,7 +86,7 @@ export interface Variete {
   reference: string;
   couleur: string;
   tailles?: TailleVariete[]; // correspond au champ JSON
-  images: string[];
+  image?: string;
 
   // Relation avec Article
   article: {

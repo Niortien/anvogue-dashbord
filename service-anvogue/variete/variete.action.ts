@@ -29,42 +29,71 @@ const VarieteAPI = {
 // CREATE
 export const createVariete = async (body: CreateVarieteSchema) => {
   const parsed = createVarieteSchema.safeParse(body);
-  if (!parsed.success) {
-    return { success: false, error: "Erreur de validation" };
-  }
+  try {
+      const parsed = createVarieteSchema.safeParse(body);
+      if (!parsed.success) {
+        return { success: false, error: "Erreur de validation" };
+      }
+      const data = parsed.data;
+  
+      const formData = new FormData();
+      formData.append("couleur", data.couleur);
+      formData.append("article_id", data.article_id);
 
-  const data = parsed.data;
-  const formData = new FormData();
+  if (data.image instanceof File) formData.append("image", data.image);
+      formData.append(
+        "tailles",
+        JSON.stringify(
+          Array.isArray(data.tailles)
+            ? data.tailles.filter(
+                (i) =>
+                  i &&
+                  typeof i === "object" &&
+                  i.taille &&
+                  i.taille.trim() !== "" &&
+                  typeof i.quantite === "number" &&
+                  !isNaN(i.quantite) &&
+                  typeof i.prix === "number" &&
+                  !isNaN(i.prix)
+              )
+            : []
+        )
+      );
+  
+      
+  
+      const response = await fetch(VarieteAPI.create.endpoint, {
+        method: VarieteAPI.create.method,
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        try {
+          const errorData = JSON.parse(errorText);
+          return {
+            success: false,
+            error:
+              typeof errorData.message === "string"
+                ? errorData.message
+                : errorData.message?.[0] || `Erreur ${response.status}`,
+          };
+        } catch {
+          return { success: false, error: errorText || `Erreur ${response.status}` };
+        }
+      }
+  
+      const responseData = await response.json();
+      return { success: true, data: responseData };
+    } catch (error) {
+      console.error("Erreur dans createArticle:", error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Erreur inconnue",
+      };
+    }
+}
 
-  formData.append("couleur", data.couleur);
-  formData.append("article_id", data.article_id);
-
-  // Ajout des images (FileList ou tableau de fichiers)
-  if (data.images && data.images.length > 0) {
-    const files = Array.from(data.images );
-    files.forEach((file) => {
-      formData.append("images", file);
-    });
-  }
-
-  // Ajout des tailles (tableau d'objets)
-  if (data.tailles) {
-    formData.append("tailles", JSON.stringify(data.tailles));
-  }
-
-  const response = await fetch(VarieteAPI.create.endpoint, {
-    method: VarieteAPI.create.method,
-    body: formData,
-  });
-
-  const responseData = await response.json();
-
-  if (!response.ok) {
-    return { success: false, error: responseData.message?.[0] ?? responseData.message };
-  }
-
-  return { success: true, data: responseData };
-};
 
 // GET ALL
 export const getAllVarietes = async () => {
@@ -106,12 +135,9 @@ export const updateVariete = async (id: string, body: UpdateVarieteSchema) => {
   if (typeof data.couleur === "string") {
   formData.append("couleur", data.couleur);
 }
-  if (data.images && data.images.length > 0) {
-    const files = Array.from(data.images);
-    files.forEach((file) => {
-      formData.append("images", file);
-    });
-  }
+ if (data.image instanceof File) {
+      formData.append("image", data.image);
+    }
   if (data.tailles) {
     formData.append("tailles", JSON.stringify(data.tailles));
   }

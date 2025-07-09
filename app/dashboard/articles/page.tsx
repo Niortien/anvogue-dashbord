@@ -9,16 +9,31 @@ type ArticleResponse = {
 
 export default async function ArticlesPage() {
   //Fetch d'article
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/article`);
-   const repons = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categorie`)
-    const repon = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/collection`)
-    const collection: Collection[] = await repon.json()
-const categorie: Category[] = await repons.json()
-const article: ArticleResponse = await response.json();
-console.log(article);
+  const responseArticle = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/article`
+  );
+  //Fetch de categorie
+  const reponseCategorie = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/categorie`
+  );
+  //Fetch de collection
+  const reponseCollection = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/collection`
+  );
+
+  //Récuperation et convertion des données sous forme JSON;
+  
+  const collection: Collection[] = await reponseCollection.json();
+  const categorie: Category[] = await reponseCategorie.json();
+  const article: ArticleResponse = await responseArticle.json();
+  console.log(article);
   return (
-      <div className="space-y-6">
-      <ArticleContent article={article} categorie={categorie} collection={collection} />
-      </div>
+    <div className="space-y-6">
+      <ArticleContent
+        article={article}
+        categorie={categorie}
+        collection={collection}
+      />
+    </div>
   );
 }
